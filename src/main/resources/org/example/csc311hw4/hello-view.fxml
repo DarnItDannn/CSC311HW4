@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="449.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.csc311hw4.HelloController">
+   <children>
+      <MenuBar>
+        <menus>
+          <Menu mnemonicParsing="false" text="File">
+            <items>
+              <MenuItem mnemonicParsing="false" onAction="#handleCreateTable" text="Create Table" />
+                  <MenuItem mnemonicParsing="false" onAction="#openFile" text="Import JSON" />
+                  <MenuItem mnemonicParsing="false" onAction="#saveToJSON" text="Export JSON" />
+                  <MenuItem mnemonicParsing="false" text="Exit" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Help">
+            <items>
+              <MenuItem mnemonicParsing="false" onAction="#aboutButton" text="About" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+      <HBox prefHeight="396.0" prefWidth="600.0">
+         <children>
+            <HBox prefHeight="367.0" prefWidth="392.0">
+               <children>
+                  <TableView fx:id="movieTableView" prefHeight="383.0" prefWidth="392.0">
+                    <columns>
+                      <TableColumn fx:id="titleColumn" prefWidth="75.0" text="Title" />
+                      <TableColumn fx:id="yearColumn" prefWidth="75.0" text="Year" />
+                        <TableColumn fx:id="salesColumn" prefWidth="75.0" text="Sales" />
+                    </columns>
+                  </TableView>
+               </children>
+            </HBox>
+            <VBox prefHeight="367.0" prefWidth="207.0">
+               <children>
+                  <Label text="Operations">
+                     <HBox.margin>
+                        <Insets left="5.0" />
+                     </HBox.margin>
+                     <VBox.margin>
+                        <Insets left="73.0" />
+                     </VBox.margin>
+                  </Label>
+                  <Button mnemonicParsing="false" text="List Records">
+                     <VBox.margin>
+                        <Insets left="63.0" top="5.0" />
+                     </VBox.margin></Button>
+                  <Line endX="100.0" opacity="0.5" startX="-100.0" strokeWidth="0.5">
+                     <HBox.margin>
+                        <Insets left="5.0" top="5.0" />
+                     </HBox.margin>
+                     <VBox.margin>
+                        <Insets left="2.0" top="5.0" />
+                     </VBox.margin>
+                  </Line>
+                  <TextField fx:id="titleTextField" promptText="Title">
+                     <VBox.margin>
+                        <Insets left="5.0" right="5.0" top="5.0" />
+                     </VBox.margin>
+                  </TextField>
+                  <TextField fx:id="yearTextField" promptText="Year">
+                     <VBox.margin>
+                        <Insets left="5.0" right="5.0" top="5.0" />
+                     </VBox.margin>
+                  </TextField>
+                  <TextField fx:id="salesTextField" promptText="Sales">
+                     <VBox.margin>
+                        <Insets left="5.0" right="5.0" top="5.0" />
+                     </VBox.margin>
+                  </TextField>
+                  <Button mnemonicParsing="false" text="Add Record">
+                     <VBox.margin>
+                        <Insets left="60.0" top="5.0" />
+                     </VBox.margin>
+                  </Button>
+                  <Line endX="100.0" opacity="0.5" startX="-100.0" strokeWidth="0.5">
+                     <VBox.margin>
+                        <Insets top="5.0" />
+                     </VBox.margin>
+                  </Line>
+                  <Button mnemonicParsing="false" onAction="#deleteRecord" text="Delete Record">
+                     <VBox.margin>
+                        <Insets left="55.0" top="5.0" />
+                     </VBox.margin>
+                  </Button>
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+      <HBox prefHeight="36.0" prefWidth="600.0">
+         <children>
+            <Label text="Status:">
+               <HBox.margin>
+                  <Insets left="5.0" top="5.0" />
+               </HBox.margin>
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Label>
+            <Text fx:id="statusText" strokeType="OUTSIDE" strokeWidth="0.0" text="Text">
+               <HBox.margin>
+                  <Insets left="5.0" top="5.0" />
+               </HBox.margin>
+            </Text>
+         </children>
+      </HBox>
+   </children>
+</VBox>
