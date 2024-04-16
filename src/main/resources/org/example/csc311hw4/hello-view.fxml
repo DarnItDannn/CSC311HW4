@@ -57,7 +57,7 @@
                         <Insets left="73.0" />
                      </VBox.margin>
                   </Label>
-                  <Button mnemonicParsing="false" text="List Records">
+                  <Button mnemonicParsing="false" onAction="#handleListRecords" text="List Records">
                      <VBox.margin>
                         <Insets left="63.0" top="5.0" />
                      </VBox.margin></Button>

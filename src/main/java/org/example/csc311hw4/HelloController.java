@@ -52,6 +52,8 @@ public class HelloController {
 
     static Connection conn;
 
+    private File selectedFile;
+
 
     public void initialize()
     {
@@ -65,8 +67,11 @@ public class HelloController {
         movieObservList = movieTableView.getItems();
     }
 
+    // Code for MenuItem Open JSON
     public void openFile()
     {
+        statusText.setText("Opening file...");
+
         // Code for Opening Directly to File Window within Project Directory
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Select JSON File");
@@ -77,24 +82,50 @@ public class HelloController {
         fileChooser.setInitialDirectory(initialDirectory);
 
         Stage stage = (Stage) movieTableView.getScene().getWindow();
-        File selectedFile = fileChooser.showOpenDialog(stage);
+        selectedFile = fileChooser.showOpenDialog(stage);
 
+        GsonBuilder builder = new GsonBuilder();
+        Gson gson = builder.create();
+
+        try (FileReader fr = new FileReader(selectedFile)) {
+            Movie[] ea = gson.fromJson(fr, Movie[].class);
+
+            createDatabase_connection();
+            for (int i = 0; i < ea.length; i++) {
+                insertDataInDB(ea[i]);
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+        statusText.setText("Opened File: " + selectedFile.getName() + "!");
+
+    }
+
+    // Code for List Records Button
+    public void handleListRecords()
+    {
         try
         {
             Gson gson = new Gson();
             FileReader fr = new FileReader(selectedFile);
 
-            // Create a Grade Array that reads from the selected Json File into the array
+            // Create a Movie Array that reads from the selected Json File into the array
             Movie[] movies = gson.fromJson(fr, Movie[].class);
 
 
-            // For each grade in the grade array, add it to the Normal Queue.
+            // For each grade in the grade array, add it to the ObservableList.
             for (Movie movie : movies)
             {
                 movieObservList.add(movie);
             }
 
             fr.close();
+
+
 
         }
 
@@ -107,11 +138,14 @@ public class HelloController {
         {
             e.printStackTrace();
         }
-
     }
 
+
+    // Code for MenuItem Save Json
     public void saveToJSON() throws FileNotFoundException
     {
+
+        statusText.setText("Saving File");
 
         // Code for Opening Directly to File Window to save within Project Directory
         FileChooser fileChooser = new FileChooser();
@@ -123,7 +157,7 @@ public class HelloController {
         fileChooser.setInitialDirectory(initialDirectory);
 
         Stage stage = (Stage) movieTableView.getScene().getWindow();
-        File selectedFile = fileChooser.showSaveDialog(stage);
+        selectedFile = fileChooser.showSaveDialog(stage);
 
         if (selectedFile != null)
         {
@@ -143,13 +177,19 @@ public class HelloController {
             }
         }
 
+        statusText.setText("File Saved as " + selectedFile + "!");
     }
 
 
     public void deleteRecord()
     {
+
+
         Movie selectedMovie = movieTableView.getSelectionModel().getSelectedItem();
+
         movieObservList.remove(selectedMovie);
+
+        statusText.setText("Deleted " + selectedMovie.getTitle() + " From TableView.");
 
     }
 
@@ -168,7 +208,7 @@ public class HelloController {
         dropTable();
         createDatabase_connection();
         createTableinDB();
-        insertDataInDB();
+//        insertDataInDB();
     }
 
     public void dropTable()
@@ -233,15 +273,15 @@ public class HelloController {
 
 
     //  Method for inserting the data created from the game into the database.
-    public void insertDataInDB()
+    public void insertDataInDB(Movie movie)
     {
         String sql = "INSERT INTO MovieDB (Title, Year, Sales) VALUES (?, ?, ?)";
         PreparedStatement preparedStatement = null;
         try {
             preparedStatement = conn.prepareStatement(sql);
-            preparedStatement.setString(1, "test");
-            preparedStatement.setInt(2, 0);
-            preparedStatement.setDouble(3, 1.0);
+            preparedStatement.setString(1, movie.getTitle());
+            preparedStatement.setInt(2, movie.getYear());
+            preparedStatement.setDouble(3, movie.getSales());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
