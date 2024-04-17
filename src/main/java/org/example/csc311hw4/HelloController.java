@@ -181,6 +181,22 @@ public class HelloController {
     }
 
 
+    public void addMovieButton()
+    {
+        String title = titleTextField.getText();
+        String year = yearTextField.getText();
+        String sales = salesTextField.getText();
+
+        Validation validation = new Validation(title, year, sales);
+
+        validation.checkTitle(title, "[A-Z][\\w*\\d*\\s*[,]*[.]*[-]*]*");
+        validation.checkYear(year,"[0-9]{4}");
+        validation.checkSales(sales,"[0-9][.]*[0-9]*");
+
+
+
+    }
+
     public void deleteRecord()
     {
 
