@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.healthmarketscience.jackcess.Database;
 import com.healthmarketscience.jackcess.DatabaseBuilder;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -54,6 +55,9 @@ public class HelloController {
 
     private File selectedFile;
 
+    int tempYear;
+    double tempSales;
+
 
     public void initialize()
     {
@@ -64,10 +68,17 @@ public class HelloController {
         salesColumn.setCellValueFactory(
                 new PropertyValueFactory<Movie, Double>("sales"));
 
+        statusText.setText("");
+
         movieObservList = movieTableView.getItems();
     }
 
     // Code for MenuItem Open JSON
+    // This method will strictly just load the JSON file into the Database.
+    // It will NOT populate the ObservableList or TableView.
+    // Sidenote Question: Should I have it clear the Database prior so there is no repeats?
+    // CreateTable does this but want to double-check.
+
     public void openFile()
     {
         statusText.setText("Opening file...");
@@ -83,6 +94,9 @@ public class HelloController {
 
         Stage stage = (Stage) movieTableView.getScene().getWindow();
         selectedFile = fileChooser.showOpenDialog(stage);
+
+
+        // Code for putting data from JSON To Database
 
         GsonBuilder builder = new GsonBuilder();
         Gson gson = builder.create();
@@ -101,43 +115,51 @@ public class HelloController {
         }
 
 
-        statusText.setText("Opened File: " + selectedFile.getName() + "!");
+        statusText.setText("Opened File: " + selectedFile.getName() + " from " + selectedFile.getAbsolutePath() + "!");
 
     }
 
     // Code for List Records Button
+    // Reads from Database into ObservableList which then populates the TableView.
+
     public void handleListRecords()
     {
         try
         {
-            Gson gson = new Gson();
-            FileReader fr = new FileReader(selectedFile);
+            String query = "SELECT * FROM MovieDB";
+            Statement statement = conn.createStatement();
+            ResultSet resultSet = statement.executeQuery(query);
 
-            // Create a Movie Array that reads from the selected Json File into the array
-            Movie[] movies = gson.fromJson(fr, Movie[].class);
+            movieTableView.getItems().clear();
+            movieObservList.clear();
 
-
-            // For each grade in the grade array, add it to the ObservableList.
-            for (Movie movie : movies)
+            // Adds everything in the query to the items.
+            while (resultSet.next())
             {
-                movieObservList.add(movie);
+                String title = resultSet.getString("Title");
+                int year = resultSet.getInt("Year");
+                double sales = resultSet.getDouble("Sales");
+
+                Movie newMovie = new Movie(title, year, sales);
+
+                movieObservList.add(newMovie);
+
             }
 
-            fr.close();
+            movieTableView.setItems(movieObservList);
 
-
+            resultSet.close();
+            statement.close();
 
         }
 
-        catch (FileNotFoundException e)
-        {
-            throw new RuntimeException(e);
-        }
-
-        catch (IOException e)
+        catch (SQLException e)
         {
             e.printStackTrace();
         }
+
+        statusText.setText("Listed Records from Database into Tableview.");
+
     }
 
 
@@ -180,7 +202,9 @@ public class HelloController {
         statusText.setText("File Saved as " + selectedFile + "!");
     }
 
-
+    // Method for checking new addition with validation.
+    // If it meets criteria, it will add to the Databse and TableView.
+    // Otherwise, an alertbox appears.
     public void addMovieButton()
     {
         String title = titleTextField.getText();
@@ -189,9 +213,33 @@ public class HelloController {
 
         Validation validation = new Validation(title, year, sales);
 
-        validation.checkTitle(title, "[A-Z][\\w*\\d*\\s*[,]*[.]*[-]*]*");
+        validation.checkTitle(title, "[A-Z][\\w*\\d*\\s*[,]*[.]*[-]*[:]*]*");
         validation.checkYear(year,"[0-9]{4}");
         validation.checkSales(sales,"[0-9][.]*[0-9]*");
+
+        if (validation.getChecker1() == "" && validation.getChecker2() == "" && validation.getChecker3() == "")
+        {
+             tempYear = Integer.parseInt(year);
+             tempSales = Double.parseDouble(sales);
+                Movie newMovie = new Movie(title, tempYear, tempSales);
+
+                insertDataInDB(newMovie);
+                movieObservList.add(newMovie);
+
+                statusText.setText("A movie has been inserted: " + newMovie.getTitle());
+        }
+
+        else
+        {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Warning");
+            alert.setHeaderText("Invalid Input");
+            alert.setContentText(validation.getChecker1() + "\n" + validation.getChecker2() +
+                    "\n" + validation.getChecker3());
+            alert.showAndWait();
+            System.out.println("Does not match");
+
+        }
 
 
 
@@ -202,11 +250,25 @@ public class HelloController {
 
 
         Movie selectedMovie = movieTableView.getSelectionModel().getSelectedItem();
+        deleteDataFromDB(selectedMovie);
 
         movieObservList.remove(selectedMovie);
 
-        statusText.setText("Deleted " + selectedMovie.getTitle() + " From TableView.");
+        statusText.setText("A movie has been deleted: " + selectedMovie.getTitle());
 
+    }
+
+    public void deleteDataFromDB(Movie movie)
+    {
+        String sql = "DELETE FROM MovieDB WHERE Title = ? AND Year = ? AND Sales = ?";
+        try (PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+            preparedStatement.setString(1, movie.getTitle());
+            preparedStatement.setInt(2, movie.getYear());
+            preparedStatement.setDouble(3, movie.getSales());
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public void aboutButton()
@@ -216,6 +278,7 @@ public class HelloController {
         alert.setHeaderText("Name and Integrity Statement");
         alert.setContentText("Danish Syed\n\nI certify that this submission is my original work.");
         alert.showAndWait();
+        statusText.setText("About Button Pressed.");
     }
 
     @FXML
@@ -224,7 +287,8 @@ public class HelloController {
         dropTable();
         createDatabase_connection();
         createTableinDB();
-//        insertDataInDB();
+
+        statusText.setText("Database Created.");
     }
 
     public void dropTable()

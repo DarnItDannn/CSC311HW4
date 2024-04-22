@@ -9,6 +9,8 @@ public class Validation
     private String verifySales;
 
     private static String checker1 = "";
+    private static String checker2 = "";
+    private static String checker3 = "";
 
     public Validation(String verifyTitle, String verifyYear, String verifySales)
     {
@@ -17,95 +19,84 @@ public class Validation
         this.verifySales = verifySales;
     }
 
-    public static void checkTitle(String verifyTitle, String regex)
+    public static String checkTitle(String verifyTitle, String regex)
     {
         boolean result;
         result = verifyTitle.matches(regex);
 
-        if (result == true) {
+        if (result) {
             System.out.println("");
             checker1 = "";
+
+            return checker1;
         }
 
         else {
 
-            checker1 = "error";
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Warning");
-            alert.setHeaderText("Invalid Input");
-            alert.setContentText("Title cannot be empty.\nYear must contain four digits.\nSales can only" +
-                    "contain digits. The decimal point is optional. If the decimal point is included there must" +
-                    "be at least one number before and at least one number after it.");
-            alert.showAndWait();
-            System.out.println("Does not match");
+            checker1 = "Title cannot be empty.\n";
+            return checker1;
+
         }
 
     }
 
-    public static void checkYear(String verifyYear, String regex)
+    public static String checkYear(String verifyYear, String regex)
     {
         boolean result;
         result = verifyYear.matches(regex);
 
-        if (result == true) {
+        if (result) {
             System.out.println("");
+            checker2 = "";
+
+            return checker2;
         }
 
         else {
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Warning");
-            alert.setHeaderText("Invalid Input");
-            alert.setContentText("Title cannot be empty.\nYear must contain four digits.\nSales can only" +
-                    "contain digits. The decimal point is optional. If the decimal point is included there must" +
-                    "be at least one number before and at least one number after it.");
-            alert.showAndWait();
-            System.out.println("Does not match");
+
+            checker2 = "Year must contain four digits.\n";
+            return checker2;
+
         }
     }
 
-    public static void checkSales(String verifySales, String regex)
+    public static String checkSales(String verifySales, String regex)
     {
         boolean result;
         result = verifySales.matches(regex);
 
         if (result == true) {
             System.out.println("");
+            checker3 = "";
+            return checker3;
         }
 
         else {
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Warning");
-            alert.setHeaderText("Invalid Input");
-            alert.setContentText("Title cannot be empty.\nYear must contain four digits.\nSales can only" +
-                    "contain digits. The decimal point is optional. If the decimal point is included there must" +
-                    "be at least one number before and at least one number after it.");
-            alert.showAndWait();
-            System.out.println("Does not match");
+
+            checker3 = "Sales can only contain digits. The decimal point is optional.\n" +
+                    "If the decimal point is included there must be at\n least one number before " +
+                    "and at least one number after it.";
+
+            return checker3;
+
+
         }
     }
 
-
-    public String getVerifyTitle() {
-        return verifyTitle;
+    public String getChecker1()
+    {
+        return checker1;
     }
 
-    public void setVerifyTitle(String verifyTitle) {
-        this.verifyTitle = verifyTitle;
+    public String getChecker2()
+    {
+        return checker2;
     }
 
-    public String getVerifyYear() {
-        return verifyYear;
+    public String getChecker3()
+    {
+        return checker3;
     }
 
-    public void setVerifyYear(String verifyYear) {
-        this.verifyYear = verifyYear;
-    }
 
-    public String getVerifySales() {
-        return verifySales;
-    }
-
-    public void setVerifySales(String verifySales) {
-        this.verifySales = verifySales;
-    }
 }
