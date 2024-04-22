@@ -271,6 +271,11 @@ public class HelloController {
         }
     }
 
+    public void exitProgram()
+    {
+        System.exit(0);
+    }
+
     public void aboutButton()
     {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
