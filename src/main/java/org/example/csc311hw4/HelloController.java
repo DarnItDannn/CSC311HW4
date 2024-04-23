@@ -76,12 +76,13 @@ public class HelloController {
     // Code for MenuItem Open JSON
     // This method will strictly just load the JSON file into the Database.
     // It will NOT populate the ObservableList or TableView.
-    // Sidenote Question: Should I have it clear the Database prior so there is no repeats?
-    // CreateTable does this but want to double-check.
+    // It DOES currently populate the database.
 
     public void openFile()
     {
         statusText.setText("Opening file...");
+
+        movieTableView.getItems().clear();
 
         // Code for Opening Directly to File Window within Project Directory
         FileChooser fileChooser = new FileChooser();
@@ -203,7 +204,7 @@ public class HelloController {
     }
 
     // Method for checking new addition with validation.
-    // If it meets criteria, it will add to the Databse and TableView.
+    // If it meets criteria, it will add to the Database and TableView.
     // Otherwise, an alertbox appears.
     public void addMovieButton()
     {
@@ -245,6 +246,9 @@ public class HelloController {
 
     }
 
+    // Method for Delete Record button.
+    // This method will delete it from the TableView and call
+    // the deleteDataFromDB method will delete it from the database
     public void deleteRecord()
     {
 
@@ -258,6 +262,7 @@ public class HelloController {
 
     }
 
+    // Method for deleting the selected item from the database
     public void deleteDataFromDB(Movie movie)
     {
         String sql = "DELETE FROM MovieDB WHERE Title = ? AND Year = ? AND Sales = ?";
@@ -271,11 +276,13 @@ public class HelloController {
         }
     }
 
+    // Code for Exit MenuItem
     public void exitProgram()
     {
         System.exit(0);
     }
 
+    // Code for About MenuItem
     public void aboutButton()
     {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -286,6 +293,7 @@ public class HelloController {
         statusText.setText("About Button Pressed.");
     }
 
+    // Code for MenuItem CreateTable
     @FXML
     public void handleCreateTable()
     {
@@ -296,6 +304,7 @@ public class HelloController {
         statusText.setText("Database Created.");
     }
 
+    // Method for Dropping the table in the DB
     public void dropTable()
     {
         try {
@@ -312,6 +321,8 @@ public class HelloController {
         }
     }
 
+
+    // Method for establishing a DB connection.
     public void createDatabase_connection()
     {
         String dbFilePath = ".//MovieDB.accdb";
@@ -357,7 +368,7 @@ public class HelloController {
     }
 
 
-    //  Method for inserting the data created from the game into the database.
+    //  Method for inserting the data into the Movie Database.
     public void insertDataInDB(Movie movie)
     {
         String sql = "INSERT INTO MovieDB (Title, Year, Sales) VALUES (?, ?, ?)";
