@@ -31,9 +31,15 @@ public class Validation
             return checker1;
         }
 
+        else if(verifyTitle.isEmpty())
+        {
+            checker1 = "Title is empty!\n";
+            return checker1;
+        }
+
         else {
 
-            checker1 = "Title cannot be empty.\n";
+            checker1 = "Title cannot be empty and must start with an uppercase.\n";
             return checker1;
 
         }
@@ -49,6 +55,12 @@ public class Validation
             System.out.println("");
             checker2 = "";
 
+            return checker2;
+        }
+
+        else if(verifyYear.isEmpty())
+        {
+            checker2 = "Year is empty!\n";
             return checker2;
         }
 
@@ -68,6 +80,12 @@ public class Validation
         if (result == true) {
             System.out.println("");
             checker3 = "";
+            return checker3;
+        }
+
+        else if(verifySales.isEmpty())
+        {
+            checker3 = "Sales is empty!\n";
             return checker3;
         }
 

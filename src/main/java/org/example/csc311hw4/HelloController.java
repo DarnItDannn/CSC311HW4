@@ -15,7 +15,6 @@ import javafx.stage.Stage;
 
 import java.io.*;
 import java.sql.*;
-import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -59,6 +58,11 @@ public class HelloController {
     double tempSales;
 
 
+    // Initialize Method which sets up the columns for the Table view and their values.
+    // Also sets the status to blank.
+    // Establishes a database connection.
+    // Associates the ObservableList with the TableView.
+
     public void initialize()
     {
         titleColumn.setCellValueFactory(
@@ -70,18 +74,40 @@ public class HelloController {
 
         statusText.setText("");
 
+        createDatabase_connection();
         movieObservList = movieTableView.getItems();
+    }
+
+
+    // Method to delete all data in the database NOT drop.
+    // This is called in openFile to ensure the databse is being emptied out
+    // prior to loading in the new information.
+
+    public void deleteAllDBInfo()
+    {
+        String sql = "DELETE FROM MovieDB";
+        PreparedStatement preparedStatement = null;
+        try {
+            preparedStatement = conn.prepareStatement(sql);
+            int rowsDeleted = preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     // Code for MenuItem Open JSON
     // This method will strictly just load the JSON file into the Database.
-    // It will NOT populate the ObservableList or TableView.
-    // It DOES currently populate the database.
+    // Before starting the bulk of the code, it will delete all data from the DB
+    // and clear the TableView.
+    // Then it DOES populate the ObservableList or TableView.
+    // Then it DOES populate the database.
 
     public void openFile()
     {
         statusText.setText("Opening file...");
 
+        deleteAllDBInfo(); // Causes issue if someone does this as the first action run,
+        // temp fix = create db connection in initialize
         movieTableView.getItems().clear();
 
         // Code for Opening Directly to File Window within Project Directory
@@ -115,13 +141,15 @@ public class HelloController {
             e.printStackTrace();
         }
 
+        // Addition based off Hoskey's email
+         handleListRecords();
 
         statusText.setText("Opened File: " + selectedFile.getName() + " from " + selectedFile.getAbsolutePath() + "!");
 
     }
 
     // Code for List Records Button
-    // Reads from Database into ObservableList which then populates the TableView.
+    // Queries from Database into ObservableList which then populates the TableView.
 
     public void handleListRecords()
     {
@@ -205,6 +233,7 @@ public class HelloController {
 
     // Method for checking new addition with validation.
     // If it meets criteria, it will add to the Database and TableView.
+    // Validation class will also check if the text field is empty.
     // Otherwise, an alertbox appears.
     public void addMovieButton()
     {
@@ -216,7 +245,7 @@ public class HelloController {
 
         validation.checkTitle(title, "[A-Z][\\w*\\d*\\s*[,]*[.]*[-]*[:]*]*");
         validation.checkYear(year,"[0-9]{4}");
-        validation.checkSales(sales,"[0-9][.]*[0-9]*");
+        validation.checkSales(sales,"[0-9]*[.]*\\d+");
 
         if (validation.getChecker1() == "" && validation.getChecker2() == "" && validation.getChecker3() == "")
         {
@@ -248,10 +277,10 @@ public class HelloController {
 
     // Method for Delete Record button.
     // This method will delete it from the TableView and call
-    // the deleteDataFromDB method will delete it from the database
+    // the deleteDataFromDB method which will delete it from the database
+
     public void deleteRecord()
     {
-
 
         Movie selectedMovie = movieTableView.getSelectionModel().getSelectedItem();
         deleteDataFromDB(selectedMovie);
