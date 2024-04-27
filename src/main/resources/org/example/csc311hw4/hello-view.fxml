@@ -24,7 +24,7 @@
               <MenuItem mnemonicParsing="false" onAction="#handleCreateTable" text="Create Table" />
                   <MenuItem mnemonicParsing="false" onAction="#openFile" text="Import JSON" />
                   <MenuItem mnemonicParsing="false" onAction="#saveToJSON" text="Export JSON" />
-                  <MenuItem mnemonicParsing="false" onAction="#exitProgram" text="Exit" />
+                  <MenuItem mnemonicParsing="false" onAction="#exitProgram" text="Close" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Help">
